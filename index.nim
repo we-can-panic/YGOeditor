@@ -65,9 +65,9 @@ func `%`(e: Effect): JsonNode = toJson(e)
 
 func toJson(o: Operation): JsonNode =
   result = %[
-      ("id", %o.id),
-      ("effect", %(o.effect.mapIt(%it)))
-    ]
+    ("id", %o.id),
+    ("effect", %(o.effect.mapIt(%it)))
+  ]
 func `%`(o: Operation): JsonNode = toJson(o)
 
 func makeBox(cards: seq[Card], o: Operation): VNode =
@@ -117,8 +117,8 @@ block ini:
   operations.add newOperation("何某", newEffect("何某", Field))
   operations.add newOperation("E・テムジン", newEffect("ラミア", Field))
 
-  echo (%* cards.mapIt(%it)).pretty
-  echo (%* operations.mapIt(%it)).pretty
+  echo (%* cards).pretty
+  echo (%* operations).pretty
 
 ###
 func calcAtk(cards: seq[Card]): int =
@@ -151,8 +151,8 @@ proc main(): VNode =
         cards.makeBox
         for o in operations:
           cards.commit(o)
-    tdiv(name="input"):
+    tdiv(name="display"):
       tdiv(name="display-atk"):
         text fmt"ATK: {cards.filterIt(it.status==Field).calcAtk()}"
-        #discard
+
 setRenderer main
