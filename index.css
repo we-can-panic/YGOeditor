@@ -1,0 +1,54 @@
+#cardlist, #lines {
+  float: left;
+  margin-right: 10px;
+}
+
+.cardname {
+  height: 30px;
+  display: flex;
+  align-items: center;
+}
+
+.arrow {
+  position: absolute;
+  z-index: 5;
+}
+
+.point {
+  top: 0;
+  bottom: 0;
+  transform: translate(-50%,-10px);
+  z-index: 5;
+  cursor: pointer;
+}
+
+.box {
+  float: left;
+}
+
+.line {
+  height: 4px;
+  width: 50px;
+  margin-top: 13px;
+  margin-bottom: 26px;
+  cursor: pointer;
+}
+
+.Deck {
+  background-color: silver;
+}
+.EXDeck {
+  background-color: silver;
+}
+.Hand {
+  background-color: black;
+}
+.Field {
+  background-color: #ff2c2c;
+}
+.Cemetery {
+  background-color: #0084ff;
+}
+.Exclusion {
+  background-color: #8900bb;
+}
