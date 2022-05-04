@@ -23,6 +23,7 @@ type
 
 var
   cards: seq[Card]
+  iniCardsData: string
   operations: seq[Operation]
 
 proc newCard(name: string, status=Deck, display=Back): Card =
@@ -69,6 +70,11 @@ func toJson(o: Operation): JsonNode =
     ("effect", %(o.effect.mapIt(%it)))
   ]
 func `%`(o: Operation): JsonNode = toJson(o)
+
+proc save(cards: seq[Card]) =
+  iniCardsData = (%cards).pretty
+proc load(cards: var seq[Card]) =
+  cards = iniCardsData.parseJson.to(seq[Card])
 
 func makeBox(cards: seq[Card], o: Operation): VNode =
   let
@@ -117,6 +123,7 @@ block ini:
   operations.add newOperation("何某", newEffect("何某", Field))
   operations.add newOperation("E・テムジン", newEffect("ラミア", Field))
 
+  cards.save()
   echo (%* cards).pretty
   echo (%* operations).pretty
 
@@ -144,6 +151,7 @@ func calcAtk(cards: seq[Card]): int =
 
 
 proc main(): VNode =
+  cards.load()
   buildHtml tdiv:
     tdiv(name="parette"):
       tdiv(id="cardlist"):
