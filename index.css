@@ -19,7 +19,6 @@
   bottom: 0;
   transform: translate(-50%,-10px);
   z-index: 5;
-  cursor: pointer;
 }
 
 .box {
@@ -31,7 +30,6 @@
   width: 50px;
   margin-top: 13px;
   margin-bottom: 26px;
-  cursor: pointer;
 }
 
 .Deck {

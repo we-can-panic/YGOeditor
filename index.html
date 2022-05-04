@@ -6,6 +6,20 @@
   <link rel="stylesheet" href="index.css">
 </head>
 <body>
+  <script>
+    function download(txt) {
+      const blob = new Blob([txt], {type: 'text/plain'});  
+      const url = URL.createObjectURL(blob);
+      // aタグ作成
+      const a = document.createElement("a");
+      document.body.appendChild(a);
+      a.download = 'YGOeditor.cmb';
+      a.href = url;
+      // クリック後に削除
+      a.click();
+      a.remove();
+    }
+  </script>
   <div id="ROOT">
     <script src="index.js"></script>
   </div>

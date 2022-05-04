@@ -121,6 +121,9 @@ block ini:
   echo (%* operations).pretty
 
 ###
+
+proc download(a: cstring) {.importc.}
+
 func calcAtk(cards: seq[Card]): int =
   let atks = {
     "ネクロスライム": 300,
@@ -152,6 +155,14 @@ proc main(): VNode =
         for o in operations:
           cards.commit(o)
     tdiv(name="display"):
+      tdiv(name="json-download"):
+        button():
+          text "ダウンロード"
+          proc onclick(ev: Event, n: VNode) =
+            download (%* {
+                        "cards": %cards,
+                        "operations": %operations
+                      }).pretty.kstring
       tdiv(name="display-atk"):
         text fmt"ATK: {cards.filterIt(it.status==Field).calcAtk()}"
 
