@@ -167,6 +167,7 @@ proc main(): VNode =
         button():
           text "ダウンロード"
           proc onclick(ev: Event, n: VNode) =
+            cards.load()
             download (%* {
                         "cards": %cards,
                         "operations": %operations
