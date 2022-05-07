@@ -102,33 +102,6 @@ proc commit(cards: var seq[Card], o: Operation): VNode =
     cards[objIdx].display = e.display
   makeBox(cards, o)
 
-###
-block ini:
-  cards.add newCard("スワラルスライム", Hand)
-  cards.add newCard("ネクロスライム", Hand)
-  cards.add newCard("ラミア", Hand)
-  cards.add newCard("テムジン", EXDeck)
-  cards.add newCard("アレクサンダー", EXDeck)
-  cards.add newCard("C.W.S.D", EXDeck)
-  cards.add newCard("E・テムジン", EXDeck)
-  cards.add newCard("何某", EXDeck)
-  operations.add newOperation("スワラルスライム", newEffect("スワラルスライム", Cemetery), newEffect("ネクロスライム", Cemetery), newEffect("テムジン", Field))
-  operations.add newOperation("スワラルスライム", newEffect("ラミア", Field), newEffect("スワラルスライム", Exclusion))
-  operations.add newOperation("テムジン", newEffect("ネクロスライム", Field))
-  operations.add newOperation("アレクサンダー", newEffect("アレクサンダー", Field), newEffect("テムジン", Cemetery), newEffect("ラミア", Cemetery))
-  operations.add newOperation("ラミア", newEffect("ラミア", Field), newEffect("ネクロスライム", Cemetery))
-  operations.add newOperation("アレクサンダー", newEffect("テムジン", Field))
-  operations.add newOperation("C.W.S.D", newEffect("C.W.S.D", Field), newEffect("アレクサンダー", Cemetery), newEffect("ラミア", Cemetery))
-  operations.add newOperation("ネクロスライム", newEffect("ネクロスライム", Exclusion), newEffect("アレクサンダー", Exclusion), newEffect("E・テムジン", Field))
-  operations.add newOperation("何某", newEffect("何某", Field))
-  operations.add newOperation("E・テムジン", newEffect("ラミア", Field))
-
-  cards.save()
-  echo (%* cards).pretty
-  echo (%* operations).pretty
-
-###
-
 proc download(a: cstring) {.importc.}
 
 func calcAtk(cards: seq[Card]): int =
@@ -175,4 +148,25 @@ proc main(): VNode =
       tdiv(name="display-atk"):
         text fmt"ATK: {cards.filterIt(it.status==Field).calcAtk()}"
 
-setRenderer main
+when not defined(testing):
+  cards.add newCard("スワラルスライム", Hand)
+  cards.add newCard("ネクロスライム", Hand)
+  cards.add newCard("ラミア", Hand)
+  cards.add newCard("テムジン", EXDeck)
+  cards.add newCard("アレクサンダー", EXDeck)
+  cards.add newCard("C.W.S.D", EXDeck)
+  cards.add newCard("E・テムジン", EXDeck)
+  cards.add newCard("何某", EXDeck)
+  operations.add newOperation("スワラルスライム", newEffect("スワラルスライム", Cemetery), newEffect("ネクロスライム", Cemetery), newEffect("テムジン", Field))
+  operations.add newOperation("スワラルスライム", newEffect("ラミア", Field), newEffect("スワラルスライム", Exclusion))
+  operations.add newOperation("テムジン", newEffect("ネクロスライム", Field))
+  operations.add newOperation("アレクサンダー", newEffect("アレクサンダー", Field), newEffect("テムジン", Cemetery), newEffect("ラミア", Cemetery))
+  operations.add newOperation("ラミア", newEffect("ラミア", Field), newEffect("ネクロスライム", Cemetery))
+  operations.add newOperation("アレクサンダー", newEffect("テムジン", Field))
+  operations.add newOperation("C.W.S.D", newEffect("C.W.S.D", Field), newEffect("アレクサンダー", Cemetery), newEffect("ラミア", Cemetery))
+  operations.add newOperation("ネクロスライム", newEffect("ネクロスライム", Exclusion), newEffect("アレクサンダー", Exclusion), newEffect("E・テムジン", Field))
+  operations.add newOperation("何某", newEffect("何某", Field))
+  operations.add newOperation("E・テムジン", newEffect("ラミア", Field))
+  cards.save()
+
+  setRenderer main
