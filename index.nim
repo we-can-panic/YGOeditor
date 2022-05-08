@@ -1,5 +1,6 @@
 import sequtils, strformat, dom, tables, math, json
 include karax/prelude
+import karax / kdom
 import paintutil
 
 type
@@ -104,6 +105,20 @@ proc commit(cards: var seq[Card], o: Operation): VNode =
 
 proc download(a: cstring) {.importc.}
 
+proc setData(res: string) =
+  let
+    content = try:
+                res.parseJson
+              except JsonParsingError:
+                %* {}
+  try:
+    cards = content["cards"].to(seq[Card])
+    operations = content["operations"].to(seq[Operation])
+    cards.save()
+  except KeyError, JsonKindError:
+    discard
+proc setData(res: cstring) = setData($res)
+
 func calcAtk(cards: seq[Card]): int =
   let atks = {
     "ネクロスライム": 300,
@@ -145,6 +160,21 @@ proc main(): VNode =
                         "cards": %cards,
                         "operations": %operations
                       }).pretty.kstring
+        input(`type`="file", id="fileupload"):
+          proc onchange(ev: Event, n: VNode) =
+            let
+              elem = cast[InputElement](ev.target)
+              file = cast[kdom.File](elem.files[0])
+              reader = newFileReader()
+            reader.readAsText(file)
+
+            proc resultAsString(f: FileReader, c: proc(res: cstring)) =
+              {.emit: """`f`.onload = () => {`c`(`f`.result)}""".}
+
+            reader.resultAsString(setData)
+
+            redraw()
+
       tdiv(name="display-atk"):
         text fmt"ATK: {cards.filterIt(it.status==Field).calcAtk()}"
 

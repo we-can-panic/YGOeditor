@@ -52,4 +52,36 @@ block utils:
   check cards[id].status==Field
   check cards[id].display==Back
 
+block file:
+  let
+    sample = (%*
+      {
+        "cards": [
+          {
+            "id": 1,
+            "name": "スワラルスライム",
+            "status": "Exclusion",
+            "display": "Front"
+          }
+        ],
+        "operations": [
+          {
+            "id": 1,
+            "effect": [
+              {
+                "id": 1,
+                "cardPlace": "Cemetery",
+                "display": "Front"
+              }
+            ]
+          }
+        ]
+      }
+    ).pretty
+  sample.setData()
+  check cards.len==1
+  check cards[0].name=="スワラルスライム"
+  check operations.len==1
+  check operations[0].id==1
+
 
