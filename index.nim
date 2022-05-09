@@ -94,14 +94,13 @@ func makeBox(cards: seq[Card], o: Operation): VNode =
 func makeBox(cards: seq[Card]): VNode =
   makeBox(cards, newOperation(0, @[newEffect(0, Hand)]))
 
-proc commit(cards: var seq[Card], o: Operation): VNode =
+proc commit(cards: var seq[Card], o: Operation) =
   for e in o.effect:
     let
       obj = cards.filterIt(it.id==e.id)[0]
       objIdx = cards.find(obj)
     cards[objIdx].status = e.cardPlace
     cards[objIdx].display = e.display
-  makeBox(cards, o)
 
 proc download(a: cstring) {.importc.}
 
@@ -149,7 +148,8 @@ proc main(): VNode =
       tdiv(id="lines"):
         cards.makeBox
         for o in operations:
-          cards.commit(o)
+          block: cards.commit(o)
+          makeBox(cards, o)
     tdiv(name="display"):
       tdiv(name="json-download"):
         button():
@@ -178,7 +178,7 @@ proc main(): VNode =
       tdiv(name="display-atk"):
         text fmt"ATK: {cards.filterIt(it.status==Field).calcAtk()}"
 
-when not defined(testing):
+when isMainModule and not defined(testing):
   cards.add newCard("スワラルスライム", Hand)
   cards.add newCard("ネクロスライム", Hand)
   cards.add newCard("ラミア", Hand)
