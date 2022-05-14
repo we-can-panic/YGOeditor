@@ -80,6 +80,45 @@ proc save(cards: seq[Card]) =
 proc load(cards: var seq[Card]) =
   cards = iniCardsData.parseJson.to(seq[Card])
 
+proc makeFirstStatusPop(): VNode =
+  cards.load()
+  buildHtml tdiv(class="popup"):
+    for card in cards:
+      tdiv(class="effectEditRow"):
+        label:
+          text card.name
+        text "=>"
+        select:
+          for p in low(CardPlace)..high(CardPlace):
+            if p==card.status:
+              option(value=fmt"{p}", selected=""):
+                text $p
+            else:
+              option(value=fmt"{p}"):
+                text $p
+    tdiv(style="text-align: center; margin-top: 10px;".toCss):
+      button:
+        text "Commit"
+        proc onclick(ev: Event, n: VNode) =
+          let
+            popupElem = getElementById("lastPopup")
+          #[ 以下の構造を想定:
+            div:
+              label
+              text
+              select
+            ...
+            div:
+              button
+          ]#
+          echo %cards
+          for i in 0..popupElem.len-2:
+            let
+              place = popupElem[i][2].value
+            cards[i].status = parseEnum[CardPlace]($place)
+          cards.save()
+          discard popups.pop()
+
 proc makeEffectEditPop(o: Operation): VNode =
   let
     srcId = o.id
@@ -146,6 +185,13 @@ proc makeEffectEditPop(o: Operation): VNode =
 
           discard popups.pop()
 
+proc makeFirstBox(cards: seq[Card]): VNode =
+  buildHtml tdiv(class="box"):
+    for card in cards:
+      tdiv(class=fmt"line {card.status}")
+    proc onclick(ev: Event, n: VNode) =
+      popups.add makeFirstStatusPop()
+
 proc makeBox(cards: seq[Card], o: Operation): VNode =
   let
     srcId = o.id
@@ -162,8 +208,6 @@ proc makeBox(cards: seq[Card], o: Operation): VNode =
       proc onclick(ev: Event, n: VNode) =
         popups.add makeEffectEditPop(o)
 
-proc makeBox(cards: seq[Card]): VNode =
-  makeBox(cards, newOperation(0, @[newEffect(0, Hand)]))
 
 proc commit(cards: var seq[Card], o: Operation) =
   for e in o.effect:
@@ -219,7 +263,7 @@ proc main(): VNode =
           tdiv(class="cardname"):
             text c.name
       tdiv(id="lines"):
-        cards.makeBox
+        cards.makeFirstBox
         for o in operations:
           block: cards.commit(o)
           makeBox(cards, o)
