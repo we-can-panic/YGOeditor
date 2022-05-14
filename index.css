@@ -70,6 +70,10 @@
   display: flex;
   margin: 10px;
 }
+.statusEditRow {
+  padding: 10px;
+  border: 1px solid gray;
+}
 .popup-back {
   position: fixed;
   top: 0px;

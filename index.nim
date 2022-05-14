@@ -41,6 +41,21 @@ proc nameToId(name: string): int =
 proc idToName(id: int): string =
   result = cards.filterIt(it.id==id)[0].name
 
+func `$$`(d: CardPlace): string =
+  case d:
+  of Deck:
+    "デッキ"
+  of EXDeck:
+    "エクストラデッキ"
+  of Hand:
+    "手札"
+  of Field:
+    "フィールド"
+  of Cemetery:
+    "墓地"
+  of Exclusion:
+    "除外ゾーン"
+
 func newEffect(id: int, cardPlace: CardPlace, display: Display = Front): Effect =
   result = Effect(id: id, cardPlace: cardPlace, display: display)
 proc newEffect(name: string, cardPlace: CardPlace, display: Display = Front): Effect =
@@ -84,18 +99,17 @@ proc makeFirstStatusPop(): VNode =
   cards.load()
   buildHtml tdiv(class="popup"):
     for card in cards:
-      tdiv(class="effectEditRow"):
+      tdiv(class="statusEditRow"):
         label:
           text card.name
-        text "=>"
-        select:
+        select(style="float: right; margin-left: 10px;".toCss):
           for p in low(CardPlace)..high(CardPlace):
             if p==card.status:
               option(value=fmt"{p}", selected=""):
-                text $p
+                text $$p
             else:
               option(value=fmt"{p}"):
-                text $p
+                text $$p
     tdiv(style="text-align: center; margin-top: 10px;".toCss):
       button:
         text "Commit"
@@ -105,7 +119,6 @@ proc makeFirstStatusPop(): VNode =
           #[ 以下の構造を想定:
             div:
               label
-              text
               select
             ...
             div:
@@ -114,7 +127,7 @@ proc makeFirstStatusPop(): VNode =
           echo %cards
           for i in 0..popupElem.len-2:
             let
-              place = popupElem[i][2].value
+              place = popupElem[i][1].value
             cards[i].status = parseEnum[CardPlace]($place)
           cards.save()
           discard popups.pop()
@@ -149,10 +162,10 @@ proc makeEffectEditPop(o: Operation): VNode =
           for status in [Deck, EXDeck, Hand, Field, Cemetery, Exclusion]:
             if status==ef.cardPlace:
               option(value=fmt"{status}", selected=""):
-                text $status
+                text $$status
             else:
               option(value=fmt"{status}"):
-                text $status
+                text $$status
         tdiv: text "に移動"
     tdiv(style="text-align: center; margin-top: 10px;".toCss):
       button:
