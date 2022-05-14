@@ -47,7 +47,7 @@ block utils:
   check cards[id].name=="A"
   check cards[id].status==Hand
   check cards[id].display==Front
-  discard cards.commit(op)
+  cards.commit(op)
   check cards[id].name=="A"
   check cards[id].status==Field
   check cards[id].display==Back

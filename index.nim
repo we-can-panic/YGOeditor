@@ -1,6 +1,6 @@
-import sequtils, strformat, dom, tables, math, json
+import sequtils, strformat, dom, tables, math, json, strutils
 include karax/prelude
-import karax / kdom
+import karax / [kdom, vstyles]
 import paintutil
 
 type
@@ -26,6 +26,7 @@ var
   cards: seq[Card]
   iniCardsData: string
   operations: seq[Operation]
+  popups: seq[VNode]
 
 proc newCard(name: string, status=Deck, display=Back): Card =
   result = Card(
@@ -37,6 +38,8 @@ proc newCard(name: string, status=Deck, display=Back): Card =
 
 proc nameToId(name: string): int =
   result = cards.filterIt(it.name==name)[0].id
+proc idToName(id: int): string =
+  result = cards.filterIt(it.id==id)[0].name
 
 func newEffect(id: int, cardPlace: CardPlace, display: Display = Front): Effect =
   result = Effect(id: id, cardPlace: cardPlace, display: display)
@@ -77,7 +80,73 @@ proc save(cards: seq[Card]) =
 proc load(cards: var seq[Card]) =
   cards = iniCardsData.parseJson.to(seq[Card])
 
-func makeBox(cards: seq[Card], o: Operation): VNode =
+proc makeEffectEditPop(o: Operation): VNode =
+  let
+    srcId = o.id
+    dstIds = o.effect.mapIt(it.id)
+  buildHtml tdiv(class="popup"):
+    tdiv(class="effectEditRow"):
+      select(name="srcSelect"):
+        for card in cards:
+          if card.id==srcId:
+            option(value=fmt"{card.id}", selected=""):
+              text card.name
+          else:
+            option(value=fmt"{card.id}"):
+              text card.name
+      tdiv: text "の効果"
+    for ef in o.effect:
+      tdiv(class="effectEditRow"):
+        select(name="dstSelect"):
+          for card in cards:
+            if card.id==ef.id:
+              option(value=fmt"{card.id}", selected=""):
+                text card.name
+            else:
+              option(value=fmt"{card.id}"):
+                text card.name
+        tdiv(style="float: left".toCss): text "を"
+        select(name="dstPlacveSelect", style="float: left".toCss):
+          for status in [Deck, EXDeck, Hand, Field, Cemetery, Exclusion]:
+            if status==ef.cardPlace:
+              option(value=fmt"{status}", selected=""):
+                text $status
+            else:
+              option(value=fmt"{status}"):
+                text $status
+        tdiv: text "に移動"
+    tdiv(style="text-align: center; margin-top: 10px;".toCss):
+      button:
+        text "Commit"
+        proc onclick(ev: Event, n: VNode) =
+          let
+            oidx = operations.find(o)
+            popupElem = getElementById("lastPopup")
+            srcId = popupElem[0][0].value.parseInt
+          #[ 以下の構造を想定:
+            div:
+              select
+              text
+            div:
+              select
+              text
+              select
+              text
+            ...
+            div:
+              button
+          ]#
+          var effects: seq[Effect]
+          for i in 1..popupElem.len-2:
+            let
+              dstId = popupElem[i][0].value.parseInt
+              dstPlace = $popupElem[i][2].value
+            effects.add(newEffect(dstId, parseEnum[CardPlace](dstPlace)))
+          operations[oidx] = newOperation(srcId, effects)
+
+          discard popups.pop()
+
+proc makeBox(cards: seq[Card], o: Operation): VNode =
   let
     srcId = o.id
     dstIds = o.effect.mapIt(it.id)
@@ -90,8 +159,10 @@ func makeBox(cards: seq[Card], o: Operation): VNode =
             drawPoint()
           else:
             drawNone()
+      proc onclick(ev: Event, n: VNode) =
+        popups.add makeEffectEditPop(o)
 
-func makeBox(cards: seq[Card]): VNode =
+proc makeBox(cards: seq[Card]): VNode =
   makeBox(cards, newOperation(0, @[newEffect(0, Hand)]))
 
 proc commit(cards: var seq[Card], o: Operation) =
@@ -177,6 +248,24 @@ proc main(): VNode =
 
       tdiv(name="display-atk"):
         text fmt"ATK: {cards.filterIt(it.status==Field).calcAtk()}"
+
+    # popup
+    for i, popup in popups:
+      block:
+        if popup.style != nil:
+          popup.style.setAttr(zIndex, $(10+i))
+        else:
+          popup.style = toCss(fmt"zIndex: {10+i};")
+        if i==popups.len-1:
+          popup.id = "lastPopup"
+      popup
+    let class = block:
+          if popups.len==0: "popup-back hide"
+          else: "popup-back"
+    tdiv(class=class, style=fmt"width: {window.innerWidth}px; height: {window.innerHeight}px;".toCss):
+      proc onclick(ev: Event, n: VNode) =
+        discard popups.pop()
+
 
 when isMainModule and not defined(testing):
   cards.add newCard("スワラルスライム", Hand)

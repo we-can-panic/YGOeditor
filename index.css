@@ -24,6 +24,10 @@
 .box {
   float: left;
 }
+.box:hover{
+  cursor: pointer;
+  box-shadow: 0px 0px 5px black;
+}
 
 .line {
   height: 4px;
@@ -49,4 +53,30 @@
 }
 .Exclusion {
   background-color: #8900bb;
+}
+
+.popup {
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 10px;
+  background-color: whitesmoke;
+  border: 3px outset silver;
+}
+.effectEditRow {
+  display: flex;
+  margin: 10px;
+}
+.popup-back {
+  position: fixed;
+  top: 0px;
+  left: 0pt;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 9;
+}
+.hide {
+  visibility: hidden;
 }
