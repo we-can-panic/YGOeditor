@@ -51,6 +51,16 @@ block utils:
   check cards[id].name=="A"
   check cards[id].status==Field
   check cards[id].display==Back
+  block atk:
+    var sample = @[
+          newCard("スワラルスライム", Field),
+          newCard("ラミア", Field),
+          newCard("テムジン", Field),
+          newCard("C.W.S.D", Field)
+        ]
+    check calcAtk(sample)==5300
+    sample[1] = newCard("ラミア", Cemetery)
+    check calcAtk(sample)==5200
 
 block file:
   let

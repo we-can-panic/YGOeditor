@@ -189,18 +189,20 @@ proc setData(res: string) =
     discard
 proc setData(res: cstring) = setData($res)
 
-func calcAtk(cards: seq[Card]): int =
-  let atks = {
-    "ネクロスライム": 300,
-    "スワラルスライム": 200,
-    "ラミア": 100,
-    "テムジン": 2000,
-    "E・テムジン": 2800,
-    "アレクサンダー": 2500,
-    "C.W.S.D": 3000,
-    "": 3000
-  }.toTable
-  cards.mapIt(
+func calcAtk(cards: seq[Card], dstPlace: CardPlace = Field): int =
+  let
+    dstCards = cards.filterIt(it.status==dstPlace)
+    atks = {
+      "ネクロスライム": 300,
+      "スワラルスライム": 200,
+      "ラミア": 100,
+      "テムジン": 2000,
+      "E・テムジン": 2800,
+      "アレクサンダー": 2500,
+      "C.W.S.D": 3000,
+      "": 3000
+    }.toTable
+  dstCards.mapIt(
       if atks.hasKey(it.name):
         atks[it.name]
       else:
@@ -247,7 +249,7 @@ proc main(): VNode =
             redraw()
 
       tdiv(name="display-atk"):
-        text fmt"ATK: {cards.filterIt(it.status==Field).calcAtk()}"
+        text fmt"ATK: {cards.calcAtk()}"
 
     # popup
     for i, popup in popups:
