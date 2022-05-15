@@ -270,7 +270,7 @@ func calcAtk(cards: seq[Card], dstPlace: CardPlace = Field): int =
 proc main(): VNode =
   cards.load()
   buildHtml tdiv:
-    tdiv(name="parette"):
+    tdiv(class="parette"):
       tdiv(id="cardlist"):
         for c in cards:
           tdiv(class="cardname"):
@@ -280,8 +280,8 @@ proc main(): VNode =
         for o in operations:
           block: cards.commit(o)
           makeBox(cards, o)
-    tdiv(name="display"):
-      tdiv(name="json-download"):
+    tdiv(class="display"):
+      tdiv(class="display-elem", name="json-download"):
         button():
           text "ダウンロード"
           proc onclick(ev: Event, n: VNode) =
@@ -290,6 +290,7 @@ proc main(): VNode =
                         "cards": %cards,
                         "operations": %operations
                       }).pretty.kstring
+      tdiv(class="display-elem", name="json-upload"):
         input(`type`="file", id="fileupload"):
           proc onchange(ev: Event, n: VNode) =
             let
@@ -305,7 +306,7 @@ proc main(): VNode =
 
             redraw()
 
-      tdiv(name="display-atk"):
+      tdiv(class="display-elem", name="display-atk"):
         text fmt"ATK: {cards.calcAtk()}"
 
     # popup

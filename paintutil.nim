@@ -1,25 +1,39 @@
 import strformat
 include karax/prelude
 
+proc isPhone(): bool {.importc.}
 
 func drawPoint* (r=5.0, color="#000000"): VNode =
-  let d = 2*r
+  let
+    d = block:
+      if not isPhone(): 2*r
+      else: 4*r
+    r_fixed = block:
+      if not isPhone(): r
+      else:             2*r
   buildHtml tdiv:
     verbatim fmt"""
-    <svg  class="point" x="0px" y="0px" width="{d}px" height="{d}px"
+    <svg  class="point point-circle" x="0px" y="0px" width="{d}px" height="{d}px"
           viewBox="0 0 {d} {d}" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="{r}" cy="{r}" r="{r}" fill="{color}"/>
+      <circle cx="{r_fixed}" cy="{r_fixed}" r="{r_fixed}" fill="{color}"/>
     </svg>
     """
 
 func drawStar* (x, y: float, color="#000000"): VNode =
   let
-    (x1, x2, x3, x4, x5) = (x*0.02, x*0.21, x*0.50, x*0.79, x*0.98)
-    (y1, y2, y3) = (y*0.1, y*0.45, y*1.0)
+    (x1, x2, x3, x4, x5) = block:
+      if not isPhone(): (x*0.02, x*0.21, x*0.50, x*0.79, x*0.98)
+      else:             (x*0.04, x*0.42, x*1.00, x*1.58, x*1.96)
+    (y1, y2, y3) = block:
+      if not isPhone(): (y*0.1, y*0.45, y*1.0)
+      else:             (y*0.2, y*0.90, y*2.0)
+    (x_fixed, y_fixed) = block:
+      if not isPhone(): (x, y)
+      else:             (x*2, y*2)
   buildHtml tdiv:
     verbatim fmt"""
-    <svg  class="point" x="0px" y="0px" width="{x}px" height="{y}px"
-          viewBox="0 0 {x} {y}" xmlns="http://www.w3.org/2000/svg">
+    <svg  class="point" x="0px" y="0px" width="{x_fixed}px" height="{y_fixed}px"
+          viewBox="0 0 {x_fixed} {y_fixed}" xmlns="http://www.w3.org/2000/svg">
       <polygon  fill="{color}"
                 points="{x1},{y2} {x5},{y2} {x2},{y3} {x3},{y1} {x4},{y3}"/>
     </svg>

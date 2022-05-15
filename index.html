@@ -3,10 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <title>YGO-editor</title>
+  <!--
+    box要素を変えるまで保留
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  -->
   <link rel="stylesheet" href="index.css">
 </head>
 <body>
   <script>
+    function isPhone() {
+      console.log((window.matchMedia && window.matchMedia('(min-height: 2000px)').matches))
+      if (window.matchMedia && window.matchMedia('(min-height: 2000px)').matches)
+        return true;
+      else
+        return false;
+    }
     function download(txt) {
       const blob = new Blob([txt], {type: 'text/plain'});  
       const url = URL.createObjectURL(blob);

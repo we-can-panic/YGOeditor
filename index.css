@@ -1,4 +1,12 @@
-#cardlist, #lines {
+#ROOT {
+  margin: 50px;
+}
+
+.parette {
+  overflow: auto;
+}
+
+#cardlist{
   float: left;
   margin-right: 10px;
 }
@@ -17,8 +25,11 @@
 .point {
   top: 0;
   bottom: 0;
-  transform: translate(-50%,-10px);
+  transform: translate(-50%,-50%);
   z-index: 5;
+}
+.point-circle {
+  transform: translate(-50%,-100%);
 }
 
 .box {
@@ -27,6 +38,14 @@
 .box:hover{
   cursor: pointer;
   box-shadow: 0px 0px 5px black;
+}
+
+#lines {
+  display: flex;
+  overflow-y: scroll;
+}
+#lines::-webkit-scrollbar {  
+  display: none;
 }
 
 .line {
@@ -53,6 +72,13 @@
 }
 .Exclusion {
   background-color: #8900bb;
+}
+
+.display {
+  margin-top: 10%;
+}
+.display-elem {
+  margin-top: 30px;
 }
 
 .popup {
@@ -83,4 +109,60 @@
 }
 .hide {
   visibility: hidden;
+}
+
+@media screen and (min-height: 2000px) {
+  #ROOT {
+    margin: 100px;
+    font-size: larger;
+  }
+  #cardlist{
+    margin-right: 20px;
+  }
+  .cardname {
+    height: 45px;
+  }
+  .point {
+    top: 0;
+    bottom: 0;
+    transform: translate(-50%,-50%);
+    z-index: 5;
+  }
+  .point-circle {
+    transform: translate(-50%,-50%);
+  }
+  .box:hover{
+    cursor: pointer;
+    box-shadow: 0px 0px 5px black;
+  }
+  .line {
+    height: 6px;
+    width: 75px;
+    margin-top: 19.5px;
+    margin-bottom: 39px;
+  }
+  .display {
+    margin-top: 10%;
+  }
+  .display-elem {
+    margin-top: 45px;
+  }
+  .popup {
+    padding: 20px;
+    border: 3px outset silver;
+  }
+  .effectEditRow {
+    display: flex;
+    margin: 20px;
+  }
+  .statusEditRow {
+    padding: 20px;
+    border: 1px solid gray;
+  }
+  button {
+    height: 50px;
+  }
+  input {
+    height: 50px;
+  }
 }
